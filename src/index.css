@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Forum display font for all text */
+    --font-display: 'Forum', Georgia, 'Times New Roman', serif;
+    --font-body: 'Forum', Georgia, 'Times New Roman', serif;
+
+    /* Dark-first premium palette */
+    --background: 230 18% 4%;
+    --foreground: 210 20% 96%;
+    --card: 228 16% 7%;
+    --card-foreground: 210 20% 96%;
+    --popover: 228 16% 6%;
+    --popover-foreground: 210 20% 96%;
+    --primary: 199 89% 60%;
+    --primary-foreground: 230 30% 4%;
+    --secondary: 225 14% 12%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 228 14% 11%;
+    --muted-foreground: 215 14% 60%;
+    --accent: 187 85% 53%;
+    --accent-foreground: 230 30% 4%;
+    --destructive: 0 72% 56%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 225 12% 16%;
+    --input: 225 12% 18%;
+    --ring: 199 89% 60%;
+    --radius: 0.625rem;
+
+    /* Extended ramps */
+    --success: 142 64% 45%;
+    --warning: 38 92% 56%;
+    --info: 199 89% 60%;
+
+    --chart-1: 199 89% 60%;
+    --chart-2: 187 85% 53%;
+    --chart-3: 142 64% 45%;
+    --chart-4: 38 92% 56%;
+    --chart-5: 280 65% 65%;
+  }
+
+  .dark {
+    --background: 230 18% 4%;
+    --foreground: 210 20% 96%;
+    --card: 228 16% 7%;
+    --card-foreground: 210 20% 96%;
+    --popover: 228 16% 6%;
+    --popover-foreground: 210 20% 96%;
+    --primary: 199 89% 60%;
+    --primary-foreground: 230 30% 4%;
+    --secondary: 225 14% 12%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 228 14% 11%;
+    --muted-foreground: 215 14% 60%;
+    --accent: 187 85% 53%;
+    --accent-foreground: 230 30% 4%;
+    --destructive: 0 72% 56%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 225 12% 16%;
+    --input: 225 12% 18%;
+    --ring: 199 89% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body {
+    font-family: var(--font-body);
+    @apply bg-background text-foreground antialiased;
+  }
+  body {
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-body { font-family: var(--font-body); }
+
+  .glass {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid hsl(var(--border) / 0.7);
+  }
+  .glass-strong {
+    background: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid hsl(var(--border));
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .grid-glow {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.15), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
