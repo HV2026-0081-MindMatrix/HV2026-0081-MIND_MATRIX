@@ -69,12 +69,11 @@ export function AskTab() {
       setMessages((prev) => [...prev, assistantMsg]);
       loadConversations();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to get answer';
       const errMsg: ChatMessage = {
         id: 'err-' + Date.now(),
         conversation_id: conversationId ?? '',
         role: 'assistant',
-        content: `I couldn't process that request. ${msg}`,
+        content: 'Something went wrong while processing your question. Please try again in a moment.',
         citations: null,
         created_at: new Date().toISOString(),
       };
@@ -85,7 +84,7 @@ export function AskTab() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto scrollbar-thin space-y-4 pb-4">
         {messages.length === 0 ? (
@@ -172,6 +171,7 @@ export function AskTab() {
             onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
             placeholder="Ask a question about this document..."
             disabled={loading}
+            className="min-w-0 flex-1"
           />
           <Button onClick={() => handleAsk()} disabled={loading || !input.trim()} size="icon" className="h-10 w-10">
             {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, FileText, FolderOpen, Sparkles, Activity,
-  User, LogOut, Menu, X, ChevronRight,
+  User, Menu, X, ChevronRight,
 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
@@ -21,9 +21,8 @@ const navItems = [
 ];
 
 export function DashboardLayout() {
-  const { profile, user, signOut } = useAuth();
+  const { profile, user } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const initials = (profile?.full_name || user?.email || 'U')
@@ -32,11 +31,6 @@ export function DashboardLayout() {
     .slice(0, 2)
     .join('')
     .toUpperCase();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
 
   const isActive = (to: string) =>
     to === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(to);
@@ -81,9 +75,6 @@ export function DashboardLayout() {
             <p className="truncate text-sm font-medium">{profile?.full_name || 'User'}</p>
             <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
           </div>
-          <Button variant="ghost" size="icon" onClick={handleSignOut} className="h-8 w-8">
-            <LogOut size={16} />
-          </Button>
         </div>
       </div>
     </div>
@@ -112,7 +103,7 @@ export function DashboardLayout() {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-card md:hidden"
+              className="fixed inset-y-0 left-0 z-50 w-60 border-r border-border bg-card md:hidden"
             >
               {sidebar}
             </motion.aside>

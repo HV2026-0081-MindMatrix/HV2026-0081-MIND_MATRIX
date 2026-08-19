@@ -191,7 +191,7 @@ export function NewWorkspacePage() {
                   onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                   onDragLeave={() => setDragOver(false)}
                   onDrop={onDrop}
-                  className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-10 text-center transition-colors ${
+                  className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 sm:p-10 text-center transition-colors ${
                     dragOver ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
                   }`}
                 >

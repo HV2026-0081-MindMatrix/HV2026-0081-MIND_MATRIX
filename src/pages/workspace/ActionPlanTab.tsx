@@ -74,7 +74,7 @@ export function ActionPlanTab() {
 
       {items.length > 0 && (
         <>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-display text-xl">{items.length} Action Items</h2>
             <Button onClick={generate} variant="outline" size="sm" className="gap-2 glass" disabled={generating}>
               <Sparkles size={14} /> Regenerate
@@ -94,7 +94,7 @@ export function ActionPlanTab() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ delay: i * 0.04 }}
                   >
-                    <Card className={`glass flex items-center gap-3 p-4 transition-colors ${
+                    <Card className={`glass flex items-center gap-3 p-4 transition-colors overflow-hidden ${
                       item.status === 'completed' ? 'opacity-50' : ''
                     }`}>
                       <button
@@ -103,15 +103,15 @@ export function ActionPlanTab() {
                       >
                         <StatusIcon size={16} className={item.status === 'completed' ? 'text-success' : item.status === 'in_progress' ? 'text-warning' : 'text-muted-foreground'} />
                       </button>
-                      <div className="flex-1">
-                        <p className={`font-display text-base ${item.status === 'completed' ? 'line-through' : ''}`}>{item.title}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className={`font-display text-sm sm:text-base ${item.status === 'completed' ? 'line-through' : ''}`}>{item.title}</p>
                         {item.description && <p className="text-sm text-muted-foreground">{item.description}</p>}
                         <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
                           {item.deadline && <span className="flex items-center gap-1"><Clock size={12} /> {new Date(item.deadline).toLocaleDateString()}</span>}
-                          {item.source && <span>{item.source}</span>}
+                          {item.source && <span className="truncate">{item.source}</span>}
                         </div>
                       </div>
-                      <Badge variant={priorityColors[item.priority] as 'destructive' | 'default' | 'secondary'}>
+                      <Badge variant={priorityColors[item.priority] as 'destructive' | 'default' | 'secondary'} className="shrink-0">
                         {item.priority}
                       </Badge>
                     </Card>

@@ -1,8 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link, Outlet, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, MessageSquare, Info, CalendarClock, ListChecks,
-  Gavel, CheckCircle2, ListTodo, Sparkles, ChevronLeft, FileText,
+  LayoutDashboard, MessageSquare, ListTodo, Sparkles, ChevronLeft, FileText,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -12,11 +11,6 @@ import type { Workspace, DocumentRecord, ProcessingStatus } from '@/types';
 const tabs = [
   { key: '', label: 'Overview', icon: LayoutDashboard },
   { key: 'ask', label: 'Ask Document', icon: MessageSquare },
-  { key: 'key-info', label: 'Key Information', icon: Info },
-  { key: 'requirements', label: 'Requirements', icon: ListChecks },
-  { key: 'deadlines', label: 'Deadlines', icon: CalendarClock },
-  { key: 'rules', label: 'Rules', icon: Gavel },
-  { key: 'eligibility', label: 'Eligibility', icon: CheckCircle2 },
   { key: 'action-plan', label: 'Action Plan', icon: ListTodo },
   { key: 'studio', label: 'AI Studio', icon: Sparkles },
 ];
@@ -73,7 +67,7 @@ export function DocumentWorkspace() {
   const base = `/workspace/${workspaceId}/document/${documentId}`;
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* Header */}
       <div className="border-b border-border px-4 py-4 md:px-6">
         <div className="mx-auto max-w-7xl">
@@ -131,13 +125,13 @@ export function DocumentWorkspace() {
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <motion.div
           key={location.pathname}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25 }}
-          className="mx-auto max-w-7xl px-4 py-6 md:px-6"
+          className="flex flex-1 flex-col overflow-y-auto scrollbar-thin mx-auto max-w-7xl px-4 py-6 md:px-6"
         >
           <Outlet context={{ workspace, doc }} />
         </motion.div>

@@ -37,11 +37,8 @@ export function LandingPage() {
         <nav className="relative z-10 flex items-center justify-between px-6 py-5 md:px-12">
           <Logo />
           <div className="flex items-center gap-3">
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
-            </Link>
-            <Link to="/signup">
-              <Button size="sm">Get Started</Button>
+            <Link to="/dashboard">
+              <Button size="sm">Open Workspace</Button>
             </Link>
           </div>
         </nav>
@@ -94,7 +91,7 @@ export function LandingPage() {
             transition={{ duration: 0.7, delay: 0.4 }}
             className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
           >
-            <Link to="/signup">
+            <Link to="/dashboard">
               <Button size="lg" className="gap-2">
                 Analyze a Document <ArrowRight size={18} />
               </Button>
@@ -215,13 +212,10 @@ export function LandingPage() {
             Upload your first document and experience the full intelligence pipeline.
           </p>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row justify-center">
-            <Link to="/signup">
+            <Link to="/dashboard">
               <Button size="lg" className="gap-2">
                 Get Started Free <ArrowRight size={18} />
               </Button>
-            </Link>
-            <Link to="/login">
-              <Button size="lg" variant="outline">Sign In</Button>
             </Link>
           </div>
         </div>

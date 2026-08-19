@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Calendar, LogOut, Shield, KeyRound, Settings, Loader2 } from 'lucide-react';
+import { User, Mail, Calendar, Shield, KeyRound, Settings, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,8 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 
 export function ProfilePage() {
-  const { user, profile, signOut } = useAuth();
-  const navigate = useNavigate();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [name, setName] = useState(profile?.full_name ?? '');
   const [saving, setSaving] = useState(false);
@@ -32,11 +30,6 @@ export function ProfilePage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
   };
 
   return (
@@ -112,9 +105,6 @@ export function ProfilePage() {
         </div>
       </Card>
 
-      <Button onClick={handleSignOut} variant="destructive" className="gap-2">
-        <LogOut size={18} /> Sign Out
-      </Button>
     </div>
   );
 }

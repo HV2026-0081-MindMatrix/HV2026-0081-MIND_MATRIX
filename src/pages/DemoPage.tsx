@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Loader2, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/hooks/use-auth';
 import { createWorkspace } from '@/services/database';
 import { useToast } from '@/hooks/use-toast';
 
@@ -62,11 +61,9 @@ For questions, contact the scholarship office at scholarship@nationalstem.org or
 
 export function DemoPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!user) return;
     (async () => {
       try {
         // Create demo workspace
@@ -198,7 +195,7 @@ export function DemoPage() {
         navigate('/dashboard');
       }
     })();
-  }, [user, navigate, toast]);
+  }, [navigate, toast]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">

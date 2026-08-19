@@ -10,7 +10,7 @@ export function Logo({ className, size = 'md' }: { className?: string; size?: 's
         <BrainCircuit size={icon} className="text-primary" />
         <div className="absolute inset-0 rounded-xl bg-primary/5 blur-md" />
       </div>
-      <span className="font-display text-lg tracking-[0.2em] text-foreground">MIND MATRIX</span>
+      <span className="font-display text-lg tracking-[0.1em] sm:tracking-[0.2em] text-foreground">MIND MATRIX</span>
     </div>
   );
 }

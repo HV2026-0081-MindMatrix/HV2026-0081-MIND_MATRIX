@@ -16,18 +16,21 @@ import type {
 } from '@/types';
 
 async function invoke<T>(name: string, body: Record<string, unknown>): Promise<T> {
+  // No authentication required — the app runs without sign-in. If a session
+  // happens to exist, its token is forwarded; otherwise the request goes out
+  // without one (the app degrades gracefully when functions aren't deployed).
   const { data: sessionData } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
-  if (!token) throw new Error('You must be signed in to use AI features.');
 
   const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/${name}`;
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-    },
+    headers,
     body: JSON.stringify(body),
   });
 
@@ -95,7 +98,7 @@ export const aiService = {
   },
 
   generateImage(documentId: string, artifactId: string, prompt: string) {
-    return invoke<{ url: string }>('generate-image', { documentId, artifactId, prompt });
+    return invoke<{ url: string; urls: string[] }>('generate-image', { documentId, artifactId, prompt });
   },
 };
 

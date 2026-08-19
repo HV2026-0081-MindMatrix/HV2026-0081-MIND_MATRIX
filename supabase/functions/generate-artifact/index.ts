@@ -1,4 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.58.0";
+import { generateText } from "../shared/ai-provider.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,29 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const GEMINI_MODEL = "gemini-3.6-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
-
-async function callGemini(prompt: string, systemInstruction: string): Promise<string> {
-  const geminiKey = Deno.env.get("GEMINI_API_KEY");
-  if (!geminiKey) throw new Error("GEMINI_API_KEY not configured");
-
-  const res = await fetch(`${GEMINI_URL}?key=${geminiKey}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      systemInstruction: { parts: [{ text: systemInstruction }] },
-      generationConfig: { temperature: 0.4 },
-    }),
-  });
-
-  if (!res.ok) throw new Error(`Gemini API error: ${await res.text()}`);
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("No content returned from Gemini");
-  return text;
-}
+// Fixed guest identity — the app runs without authentication (migration 002).
+const GUEST_USER_ID = "00000000-0000-4000-8000-000000000001";
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -38,19 +18,11 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const geminiKey = Deno.env.get("GEMINI_API_KEY");
-    const authHeader = req.headers.get("Authorization")!;
     const supabase = createClient(supabaseUrl, serviceKey);
-    const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const { data: { user } } = await userClient.auth.getUser();
-    if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
     const { documentId, type } = await req.json();
     const { data: doc } = await supabase.from("documents").select("*").eq("id", documentId).maybeSingle();
-    if (!doc || doc.user_id !== user.id) {
+    if (!doc) {
       return new Response(JSON.stringify({ error: "Document not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
@@ -67,15 +39,6 @@ Deno.serve(async (req: Request) => {
       flashcards: "Flashcards", concept_visual: "Concept Visual", executive_brief: "Executive Brief",
     };
 
-    if (!geminiKey) {
-      const { data: art } = await supabase.from("generated_artifacts").insert({
-        document_id: documentId, user_id: user.id, artifact_type: type,
-        title: `${labels[type] ?? type} for ${doc.file_name}`,
-        content: "Artifact generation requires the GEMINI_API_KEY to be configured.",
-      }).select().single();
-      return new Response(JSON.stringify({ artifact: art }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-
     const prompts: Record<string, string> = {
       infographic: "Create a text-based infographic specification summarizing the key data points, statistics, and visual hierarchy from this document.",
       mind_map: "Create a text-based mind map showing the concept hierarchy and relationships in this document.",
@@ -88,10 +51,13 @@ Deno.serve(async (req: Request) => {
     const context = run?.executive_summary ?? "No summary available.";
     const systemInstr = "You are an AI that creates educational artifacts from documents. Be thorough, structured, and informative.";
 
-    const content = await callGemini(`${prompts[type] ?? prompts.executive_brief}\n\nDocument summary: ${context}`, systemInstr);
+    const { text: content } = await generateText(
+      `${prompts[type] ?? prompts.executive_brief}\n\nDocument summary: ${context}`,
+      { systemInstruction: systemInstr, temperature: 0.4 }
+    );
 
     const { data: art } = await supabase.from("generated_artifacts").insert({
-      document_id: documentId, user_id: user.id, artifact_type: type,
+      document_id: documentId, user_id: GUEST_USER_ID, artifact_type: type,
       title: `${labels[type] ?? type} for ${doc.file_name}`,
       content,
     }).select().single();
